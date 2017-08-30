@@ -38,7 +38,9 @@ namespace IPDI {
 		Histograma histograma() const;
 		static Imagen histogramaAImagen(const Histograma &histograma);
 		Imagen constraste() const;
-		Imagen ecualizada()const;
+		Imagen ecualizarConHistograma(const Histograma &histograma)const;
+		
+		
 	private:
 		int _cantidadDeNivelesDeGris;
 		MatrizUChar _matriz;

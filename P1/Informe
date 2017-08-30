@@ -18,6 +18,10 @@ Note: Use cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local .. 
 
 Para Compilar
 En la carpeta Source abrir una terminal y hacer:
+g++ -std=c++11 *.cpp -o <nombre salida> `pkg-config --cflags --libs opencv`
+
+ejemplo
+
 g++ -std=c++11 *.cpp -o main `pkg-config --cflags --libs opencv`
 
 Si al correr el programa tira un error parecido al siguiente
@@ -29,4 +33,12 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 sudo ldconfig
 
 Y probar compilando otra vez.
+
+Para correrlo ./<nombre salida>
+
+En el ejemplo
+./main
+
+Luego ingresar el nombre de imagen de entrada incluyendo extención.
+Luego ingresar el nombre de imagen de salida incluyendo extención.
 

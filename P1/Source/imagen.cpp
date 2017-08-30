@@ -124,21 +124,22 @@ namespace IPDI {
 	}
 	
 	Imagen Imagen::constraste() const{
-		return ecualizada();
+		Histograma h = histograma().acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno();
+		return ecualizarConHistograma(h);
 	}
 	
-	Imagen Imagen::ecualizada()const{
+	//'histograma' debe tener valores entre 0 y _cantidadDeNivelesDeGris - 1
+	Imagen Imagen::ecualizarConHistograma(const Histograma &histograma)const {
+		assert (histograma.cantidadDeElementos() == _cantidadDeNivelesDeGris);
 		int alto = _matriz.alto();
 		int ancho = _matriz.ancho();
 		
 		MatrizUChar m = MatrizUChar(alto, ancho, (unsigned char)0);
-		Histograma h = histograma();
-		Histograma acum = h.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno();
 		
 		for(int i = 0; i < alto; i++){
 			for(int j = 0; j < ancho; j++){
-				//cout << "i " << i << " j " << j << " m[i][j]] " << m[i][j] << " acum[m[i][j]]] " << (unsigned char)acum[m[i][j]] << endl;
-				m[i][j] = (unsigned char)acum[_matriz[i][j]];
+				//cout << "i " << i << " j " << j << " m[i][j]] " << m[i][j] << " histograma[m[i][j]]] " << (unsigned char)histograma[m[i][j]] << endl;
+				m[i][j] = (unsigned char)histograma[_matriz[i][j]];
 			}
 		}
 		
