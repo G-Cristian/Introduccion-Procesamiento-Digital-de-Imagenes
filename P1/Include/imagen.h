@@ -2,8 +2,11 @@
 #define _IMAGEN_H_
 
 #include "matriz.h"
+#include "histograma.h"
 
 namespace IPDI {
+	class Histograma;
+	
 	class Imagen {
 	public:
 		Imagen(const MatrizUChar &matriz, int cantidadDeNivelesDeGris, int canales);
@@ -11,6 +14,7 @@ namespace IPDI {
 
 		inline int alto() const { return _matriz.alto(); }
 		inline int ancho() const { return (int)(_matriz.ancho() / _canales); }
+		inline int cantidadDeNivelesDeGris() const { return _cantidadDeNivelesDeGris; }
 		inline int canales() const { return _canales; }
 		inline const MatrizUChar & matriz() const { return _matriz; }
 
@@ -31,8 +35,10 @@ namespace IPDI {
 		Imagen negativo() const;
 		Imagen umbral(int u) const;
 		vector<Imagen> planosDeBits() const;
-		vector<double> histograma() const;
-		static Imagen histogramaAImagen(const vector<double> &histograma);
+		Histograma histograma() const;
+		static Imagen histogramaAImagen(const Histograma &histograma);
+		Imagen constraste() const;
+		Imagen ecualizada()const;
 	private:
 		int _cantidadDeNivelesDeGris;
 		MatrizUChar _matriz;

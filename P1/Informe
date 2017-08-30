@@ -1,0 +1,32 @@
+Esta aplicación usa OpenCV.
+
+Instalacion OpenCV Ubuntu.
+
+Guia de http://docs.opencv.org/2.4/doc/tutorials/introduction/linux_install/linux_install.html
+
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+git clone https://github.com/opencv/opencv.git
+cd opencv
+mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+make
+sudo make install
+
+Note: Use cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local .. , without spaces after -D if 'cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..' do not work.
+
+Para Compilar
+En la carpeta Source abrir una terminal y hacer:
+g++ -std=c++11 *.cpp -o main `pkg-config --cflags --libs opencv`
+
+Si al correr el programa tira un error parecido al siguiente
+'./main: error while loading shared libraries: libopencv_imgcodecs.so.3.3: cannot open shared object file: No such file or directory'
+
+hacer en la terminal
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+sudo ldconfig
+
+Y probar compilando otra vez.
+

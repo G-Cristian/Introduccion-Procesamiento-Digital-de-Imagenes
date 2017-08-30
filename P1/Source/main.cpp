@@ -1,5 +1,6 @@
 #include "../Include/opencvWrapper.h"
 #include "../Include/imagen.h"
+#include "../Include/histograma.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -42,7 +43,20 @@ int main() {
 //		oglw.escribirImagen(ss.str(), planos[i]);
 //	}
 
-	vector<double> h = img1.histograma();
+	Histograma h = img1.histograma();
 	Imagen histo = Imagen::histogramaAImagen(h);
 	oglw.escribirImagen("(histograma)" + nombreImagenSalida, histo);
+	
+	Histograma acum = h.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno();
+	Imagen acumImg = acum.aImagen();
+	oglw.escribirImagen("(acum)" + nombreImagenSalida, acumImg);
+	
+	Imagen contraste = img1.constraste();
+	oglw.escribirImagen("(contraste)" + nombreImagenSalida, contraste);
+	
+	Histograma histoEcu = contraste.histograma();
+	Imagen histoEcuImg = histoEcu.aImagen();
+	oglw.escribirImagen("(histo de imagen ecualizada)" + nombreImagenSalida, histoEcuImg);
+	
+	oglw.escribirImagen("(acum de histo de imagen ecualizada)" + nombreImagenSalida, histoEcu.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno().aImagen());
 }

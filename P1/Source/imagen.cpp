@@ -114,47 +114,37 @@ namespace IPDI {
 		return imagenesPlanos;
 	}
 
-	vector<double> Imagen::histograma() const {
-		vector<double> h = vector<double>(_cantidadDeNivelesDeGris, 0.0);
-		int alto = _matriz.alto();
-		int ancho = _matriz.ancho();
-		double anchoXAlto = ancho * alto;
-		for (int i = 0; i < alto; i++) {
-			for (int j = 0; j < ancho; j++) {
-				h[_matriz[i][j]] += 1.0 / anchoXAlto;
-			}
-		}
-
-		return h;
+	Histograma Imagen::histograma() const {
+		return Histograma(*this);
 	}
 
 	//histograma debe tener algun elemento.
-	Imagen Imagen::histogramaAImagen(const vector<double> &histograma) {
-		assert(histograma.size() > 0);
-
-		double max = -1.0;
-		for (int i = 0; i < histograma.size(); i++) {
-			if (max < histograma[i]) {
-				max = histograma[i];
-			}
-		}
-
-		const int alto = histograma.size();
-		const int ancho = histograma.size();
-
-		MatrizUChar m = MatrizUChar(alto, ancho, (unsigned char)0);
-
-		for (int j = 0; j < ancho; j++) {
-			int u = (int)((alto-1) * (histograma[j] / max));
-			for (int i = 0; i < alto; i++) {
-				if (i <= u) {
-					m[alto - i - 1][j] = 255;
-				}
-			}
-		}
-
-		return Imagen(m, histograma.size(), 1);
+	Imagen Imagen::histogramaAImagen(const Histograma &histograma) {
+		return histograma.aImagen();
 	}
+	
+	Imagen Imagen::constraste() const{
+		return ecualizada();
+	}
+	
+	Imagen Imagen::ecualizada()const{
+		int alto = _matriz.alto();
+		int ancho = _matriz.ancho();
+		
+		MatrizUChar m = MatrizUChar(alto, ancho, (unsigned char)0);
+		Histograma h = histograma();
+		Histograma acum = h.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno();
+		
+		for(int i = 0; i < alto; i++){
+			for(int j = 0; j < ancho; j++){
+				//cout << "i " << i << " j " << j << " m[i][j]] " << m[i][j] << " acum[m[i][j]]] " << (unsigned char)acum[m[i][j]] << endl;
+				m[i][j] = (unsigned char)acum[_matriz[i][j]];
+			}
+		}
+		
+		return Imagen(m, _cantidadDeNivelesDeGris, _canales);
+	}
+	
 
 	//Multiplicacion con saturación en 0 y cantidadDeNivelesDeGris-1
 	Imagen operator*(double escalar, const Imagen& imagen) {
