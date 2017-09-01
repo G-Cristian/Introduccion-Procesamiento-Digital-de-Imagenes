@@ -1,4 +1,5 @@
 #include "../Include/imagen.h"
+#include <algorithm>
 #include <cmath>
 
 using namespace std;
@@ -123,9 +124,38 @@ namespace IPDI {
 		return histograma.aImagen();
 	}
 	
-	Imagen Imagen::constraste() const{
-		Histograma h = histograma().acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno();
-		return ecualizarConHistograma(h);
+	Imagen Imagen::contraste() const{
+		
+		int alto = _matriz.alto();
+		int ancho = _matriz.ancho();
+		int minimo = _matriz.minimo();
+		int maximo = _matriz.maximo();
+
+		const int unQuinto = minimo + (maximo - minimo) / 5;
+		const int dosQuintos = minimo + 2*(maximo - minimo) / 5;
+		const int tresQuintos = minimo + 3 * (maximo - minimo) / 5;
+		const int cuatroQuintos = minimo + 4 * (maximo - minimo) / 5;
+
+		MatrizUChar m = MatrizUChar(alto, ancho, (unsigned char)0);
+
+		for (int i = 0; i < alto; i++) {
+			for (int j = 0; j < ancho; j++) {
+				m[i][j] = _matriz[i][j];
+				if (_matriz[i][j] < unQuinto)
+					m[i][j] = _matriz[i][j] / 5;
+				else if (_matriz[i][j] < dosQuintos)
+					m[i][j] = (2 * _matriz[i][j] / 5);
+				else if (_matriz[i][j] < tresQuintos)
+					m[i][j] = (5 * _matriz[i][j] / 5);
+				else if (_matriz[i][j] < cuatroQuintos)
+					m[i][j] = min(7 * (int)(_matriz[i][j]) / 5, (int)255);
+				else
+					m[i][j] = min(6 * (int)(_matriz[i][j]) / 5, 255);
+				
+			}
+		}
+
+		return Imagen(m, _cantidadDeNivelesDeGris, _canales);
 	}
 	
 	//'histograma' debe tener valores entre 0 y _cantidadDeNivelesDeGris - 1

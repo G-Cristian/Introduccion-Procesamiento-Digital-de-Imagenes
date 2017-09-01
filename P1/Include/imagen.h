@@ -37,7 +37,7 @@ namespace IPDI {
 		vector<Imagen> planosDeBits() const;
 		Histograma histograma() const;
 		static Imagen histogramaAImagen(const Histograma &histograma);
-		Imagen constraste() const;
+		Imagen contraste() const;
 		Imagen ecualizarConHistograma(const Histograma &histograma)const;
 		
 		

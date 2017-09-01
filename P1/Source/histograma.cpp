@@ -123,8 +123,8 @@ namespace IPDI {
 		assert(_datos.size() == otroAcumulado._datos.size());
 		int n = _datos.size();
 		vector<double> datos = vector<double>(n, 0.0);
-		Histograma w = this->acumulado().llevarAIntervaloCeroLMenosUno(2);
-		Histograma w_m = otroAcumulado.llevarAIntervaloCeroLMenosUno(2);
+		Histograma w = this->acumulado();
+		const Histograma &w_m = otroAcumulado;
 		
 		int j = 0;
 		for(int i = 0; i < n; i++){
@@ -133,12 +133,14 @@ namespace IPDI {
 				j++;
 			}
 			if(j >= n){
-				stringstream ss;
-				ss << "Error in file: " << __FILE__ << " line: " << __LINE__ <<". 'j' deberia ser menor a 'n'.";
-				throw ss.str();
+				datos[i] = n-1;
+				//stringstream ss;
+				//ss << "Error in file: " << __FILE__ << " line: " << __LINE__ <<". 'j' deberia ser menor a 'n'.";
+				//throw ss.str();
 			}
-			
-			datos[i] = j;
+			else{
+				datos[i] = j;
+			}
 			
 			//cout<<"datos[i]: " << datos[i] << endl;
 		}

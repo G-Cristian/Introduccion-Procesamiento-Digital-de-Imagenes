@@ -217,11 +217,27 @@ public:
 
 		for (int i = 0; i < r._alto; i++) {
 			for (int j = 0; j < r._ancho; j++) {
-				r[i][j] = _matriz[filaSup + i][colDer + j];
+				r[i][j] = _matriz[filaSup + i][colIzq + j];
 			}
 		}
 
 		return r;
+	}
+
+	T minimo()const {
+		T min = 0;
+		if (_alto * _ancho > 0) {
+			min = _matriz[0][0];
+			for (int i = 0; i < _alto; i++) {
+				for (int j = 0; j < _ancho; j++) {
+					if (min > _matriz[i][j]) {
+						min = _matriz[i][j];
+					}
+				}
+			}
+		}
+
+		return min;
 	}
 
 	T maximo()const {

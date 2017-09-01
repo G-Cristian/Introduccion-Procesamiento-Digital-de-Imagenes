@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "../Include/opencvWrapper.h"
 #include "../Include/imagen.h"
 #include "../Include/histograma.h"
@@ -49,67 +50,81 @@ int main() {
 	Imagen img1 = oglw.abrirImagen(nombreImagenEntrada);
 
 //	oglw.escribirImagen("(original)" + nombreImagenSalida, img1);
+	
+	Imagen compresionRangoDinamico = img1.compresionDelRangoDinamico();
+	oglw.escribirImagen(nombreImagenSalida + "(compresionRangoDinamico).png", compresionRangoDinamico);
 
-//	Imagen compresionRangoDinamico = img1.compresionDelRangoDinamico();
-//	oglw.escribirImagen("(compresionRangoDinamico)"+ nombreImagenSalida, compresionRangoDinamico);
+	Imagen negativo = img1.negativo();
+	oglw.escribirImagen(nombreImagenSalida + "(negativo).png", negativo);
 
-//	Imagen negativo = img1.negativo();
-//	oglw.escribirImagen("(negativo)"+ nombreImagenSalida, negativo);
+	Imagen umbral = img1.umbral(100);
+	oglw.escribirImagen(nombreImagenSalida + "(umbral).png", umbral);
 
-//	Imagen umbral = img1.umbral(100);
-//	oglw.escribirImagen("(umbral)" + nombreImagenSalida, umbral);
-
-//	vector<Imagen> planos = img1.planosDeBits();
-//	for (int i = 0; i < 8; i++) {
-//		stringstream ss;
-//		ss << "(planos - bit " << i << ") " << nombreImagenSalida;
-//		oglw.escribirImagen(ss.str(), planos[i]);
-//	}
+	vector<Imagen> planos = img1.planosDeBits();
+	for (int i = 0; i < 8; i++) {
+		stringstream ss;
+		ss << nombreImagenSalida << "(planos - bit " << i << ").png";
+		oglw.escribirImagen(ss.str(), planos[i]);
+	}
 
 	Histograma h = img1.histograma();
-	Imagen histo = Imagen::histogramaAImagen(h);
-	oglw.escribirImagen("(histograma)" + nombreImagenSalida, histo);
+	oglw.escribirImagen(nombreImagenSalida + "(histograma).png", h.aImagen());
 	
 	Histograma acum = h.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno();
-	Imagen acumImg = acum.aImagen();
-	oglw.escribirImagen("(histograma - acum)" + nombreImagenSalida, acumImg);
-	/*
-	Imagen contraste = img1.constraste();
-	oglw.escribirImagen("(contraste)" + nombreImagenSalida, contraste);
+	oglw.escribirImagen(nombreImagenSalida + "(histograma - acum).png", acum.aImagen());
 	
-	Histograma histoEcu = contraste.histograma();
-	Imagen histoEcuImg = histoEcu.aImagen();
-	oglw.escribirImagen("(contraste - histo)" + nombreImagenSalida, histoEcuImg);
 	
-	oglw.escribirImagen("(contraste - histo - ecu)" + nombreImagenSalida, histoEcu.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno().aImagen());
+	Imagen contraste = img1.contraste();
+	oglw.escribirImagen(nombreImagenSalida + "(contraste).png", contraste);
 	
-	Imagen dobleEcuImg = contraste.ecualizarConHistograma(histoEcu);
-	oglw.escribirImagen("(doble ecu)" + nombreImagenSalida, dobleEcuImg);
+	Histograma histoConstraste = contraste.histograma();
+	oglw.escribirImagen(nombreImagenSalida + "(contraste - histo).png", histoConstraste.aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(contraste - histo - acum).png", histoConstraste.acumulado().aImagen());
+	
+	
+	Imagen ecualizada = img1.ecualizarConHistograma(h.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno());
+	oglw.escribirImagen(nombreImagenSalida + "(ecualizada).png", ecualizada);
+	
+	Histograma histoEcu = ecualizada.histograma();
+	oglw.escribirImagen(nombreImagenSalida + "(ecualizada - histo).png", histoEcu.aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(ecualizada - histo - acum).png", histoEcu.acumulado().aImagen());
+
+	Imagen dobleEcuImg = ecualizada.ecualizarConHistograma(histoEcu.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno());
+	oglw.escribirImagen(nombreImagenSalida + "(doble ecu).png", dobleEcuImg);
 	
 	Histograma histoDobleEcu = dobleEcuImg.histograma();
-	oglw.escribirImagen("(doble ecu - histo)" + nombreImagenSalida, histoDobleEcu.aImagen());
-	oglw.escribirImagen("(doble ecu - histo - acum)" + nombreImagenSalida, histoDobleEcu.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(doble ecu - histo).png", histoDobleEcu.aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(doble ecu - histo - acum).png", histoDobleEcu.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno().aImagen());
 	
-	*/
-	/*
 	Histograma normalHisto = Histograma(256, DistribucionNormalFunctor(256.0 / 2.0, 256.0 / 4.0));
-	oglw.escribirImagen("(normal - histo)" + nombreImagenSalida, normalHisto.aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(normal - histo).png", normalHisto.aImagen());
 	
 	Histograma normalHistoAcum = normalHisto.acumulado();
-	oglw.escribirImagen("(normal - histo - acum)" + nombreImagenSalida, normalHistoAcum.aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(normal - histo - acum).png", normalHistoAcum.aImagen());
 	
 	Histograma especificadoConNormal = h.especificarParaObtenerDistribucionAcumulada(normalHistoAcum);
-	
+	//oglw.escribirImagen(nombreImagenSalida + "(histo - especificado con normal).png", especificadoConNormal.aImagen());
+	//oglw.escribirImagen(nombreImagenSalida + "(histo - especificado con normal - acum).png", especificadoConNormal.acumulado().aImagen());
+
 	Imagen normalEcuImg = img1.ecualizarConHistograma(especificadoConNormal);
-	oglw.escribirImagen("(normal - ecu - img)" + nombreImagenSalida, normalEcuImg);
-	oglw.escribirImagen("(normal - ecu - img - histo)" + nombreImagenSalida, normalEcuImg.histograma().aImagen());
-	oglw.escribirImagen("(normal - ecu - img - histo - acum)" + nombreImagenSalida, normalEcuImg.histograma().acumulado().aImagen());
-	*/
-	Histograma modificadoHist = h.histogramaModificadoComoUniforme(2);
-	Imagen modificadoImg = img1.ecualizarConHistograma(modificadoHist.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno());
-	oglw.escribirImagen("(modificado - hist)" + nombreImagenSalida, modificadoHist.aImagen());
-	oglw.escribirImagen("(modificado - hist - acum)" + nombreImagenSalida, modificadoHist.acumulado().aImagen());
-	oglw.escribirImagen("(modificado - img)" + nombreImagenSalida, modificadoImg);
-	oglw.escribirImagen("(modificado - img - histo)" + nombreImagenSalida, modificadoImg.histograma().aImagen());
-	oglw.escribirImagen("(modificado - img - histo - acum)" + nombreImagenSalida, modificadoImg.histograma().acumulado().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(normal - ecu - img).png", normalEcuImg);
+	oglw.escribirImagen(nombreImagenSalida + "(normal - ecu - img - histo).png", normalEcuImg.histograma().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(normal - ecu - img - histo - acum).png", normalEcuImg.histograma().acumulado().aImagen());
+	
+	Histograma modificadoHist1 = h.histogramaModificadoComoUniforme(1);
+	Imagen modificadoImg1 = img1.ecualizarConHistograma(modificadoHist1.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno());
+	//oglw.escribirImagen(nombreImagenSalida + "(modificado - hist1).png", modificadoHist1.aImagen());
+	//oglw.escribirImagen(nombreImagenSalida + "(modificado - hist1 - acum).png", modificadoHist1.acumulado().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(modificado - img1).png", modificadoImg1);
+	oglw.escribirImagen(nombreImagenSalida + "(modificado - img1 - histo).png", modificadoImg1.histograma().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(modificado - img1 - histo - acum).png", modificadoImg1.histograma().acumulado().aImagen());
+
+	Histograma modificadoHist2 = h.histogramaModificadoComoUniforme(2);
+	Imagen modificadoImg2 = img1.ecualizarConHistograma(modificadoHist2.acumuladoEnIntervaloCeroYCantidadDeElementosMenosUno());
+	//oglw.escribirImagen(nombreImagenSalida + "(modificado - hist2).png", modificadoHist2.aImagen());
+	//oglw.escribirImagen(nombreImagenSalida + "(modificado - hist2 - acum).png", modificadoHist2.acumulado().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(modificado - img2).png", modificadoImg2);
+	oglw.escribirImagen(nombreImagenSalida + "(modificado - img2 - histo).png", modificadoImg2.histograma().aImagen());
+	oglw.escribirImagen(nombreImagenSalida + "(modificado - img2 - histo - acum).png", modificadoImg2.histograma().acumulado().aImagen());
+	
 }
