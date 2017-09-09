@@ -56,6 +56,7 @@ int main() {
 	oglw.escribirImagen(nombreImagenSalida + "(histograma I despues de ecualizar).png", imagneIEcualizada.histograma().aImagen());
 	oglw.escribirImagen(nombreImagenSalida + "(I ecualizado).png", imagneIEcualizada);
 	oglw.escribirImagen(nombreImagenSalida + "(ecualizada en I).png", ecualizadaEnI);
+	oglw.escribirImagen(nombreImagenSalida + "(imagen desde HSI original).png", Imagen::aPartirDeHSI(hsi.H_Referencia(), hsi.S_Referencia(), hsi.I_Referencia()));
 
 	return 0;
 }
