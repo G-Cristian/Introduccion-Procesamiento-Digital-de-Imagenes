@@ -3,9 +3,12 @@
 
 #include "matriz.h"
 #include "histograma.h"
+#include "vector3.h"
+#include "imagenHSI.h"
 
 namespace IPDI {
 	class Histograma;
+	class ImagenHSI;
 	
 	class Imagen {
 	public:
@@ -31,6 +34,8 @@ namespace IPDI {
 		//Multiplicacion con saturación en 0 y cantidadDeNivelesDeGris
 		Imagen operator*(double escalar) const;
 
+		//Si la cantidad de canales es menor a 3 los ultimos elementos valen 0.
+		inline Vector3UChar pixelBGREnXY(int x, int y) const { return Vector3UChar(_matriz.obtenerEnRangoDesdeYX(y, x * _canales, _canales)); }
 		Imagen compresionDelRangoDinamico(int nivelDeGrisDeimagenDeSalida = 256) const;
 		Imagen negativo() const;
 		Imagen umbral(int u) const;
@@ -40,7 +45,16 @@ namespace IPDI {
 		Imagen contraste() const;
 		Imagen ecualizarConHistograma(const Histograma &histograma)const;
 		
-		
+		vector<Imagen> separarEnCanalesEscalaDeGrises()const;
+		vector<Histograma> histogramasDeCanales() const;
+		//Se espera que la imagen tenga 3 canales (BGR)
+		ImagenHSI aImagenHSI()const;
+		double hDeHSI(unsigned char r, unsigned char g, unsigned char b) const;
+		double sDeHSI(unsigned char r, unsigned char g, unsigned char b) const;
+		double iDeHSI(unsigned char r, unsigned char g, unsigned char b) const;
+
+		//'H' debe pertenecer [0, 2Pi], 'S' debe pertenecer [0, 1], 'I' debe pertenecer [0, 255].
+		static Imagen aPartirDeHSI(const MatrizDouble &H, const MatrizDouble &S, const MatrizDouble &I);
 	private:
 		int _cantidadDeNivelesDeGris;
 		MatrizUChar _matriz;

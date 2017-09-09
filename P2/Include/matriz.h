@@ -5,6 +5,7 @@
 #include <exception>
 #include <assert.h>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -53,6 +54,9 @@ private:
 
 template <class T> class Matriz{
 public:
+	Matriz(int alto, int ancho) :Matriz<T>(alto, ancho, T()) {
+	}
+
 	Matriz(int alto, int ancho, T valorInicial) {
 		_ancho = ancho;
 		_alto = alto;
@@ -112,6 +116,20 @@ public:
 	
 	inline int alto() const {
 		return _alto;
+	}
+
+	//Obtiene los valores desde Y, X hasta Y, X + rango - 1.
+	//Si X + rango >= ancho obtiene hasta ancho - 1 y llena con ceros el resto
+	vector<T> obtenerEnRangoDesdeYX(int y, int x, int rango)const {
+		assert(indiceEnRangoAlto(y) && indiceEnRangoAncho(x));
+
+		vector<T> ret = vector<T>(rango, T());
+		int limiteAncho = min(_ancho, x + rango);
+		for (int i = x; i < limiteAncho; i++) {
+			ret[i - x] = _matriz[y][i];
+		}
+
+		return ret;
 	}
 
 	//Crea puntero. El usuario debe encargarse de liberar la memoria.
@@ -174,11 +192,11 @@ public:
 	Matriz<T> operator/(int escalar) const {
 		return *this * (1.0/(double)escalar);
 	}
-	
+	*/
 	Matriz<T> operator/(double escalar) const {
 		return *this * (1.0/escalar);
 	}
-	*/
+	
 	//Satura los valores entre 0 y 255
 	Matriz<T> saturar(T menor, T mayor) const {
 		return crearMatrizAPartirDeOtraAplicandoFuncAElementos(*this, SaturarMatrizAMatrizCharFunctor<T>(menor, mayor));
